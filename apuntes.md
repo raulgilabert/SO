@@ -44,7 +44,7 @@ de recursos.
 El sistema operativo es clave para el funcionamiento del ordenador ya que es el
 único programa que tiene los privilegios de acceso al hardware.
 
-## Qué ofrece el sistema operativo?
+### Qué ofrece el sistema operativo?
 
 - Nos ofrece un entorno usable, abstrayendo a los usuarios de las diferencias
 entre los diferentes sistemas físicos.
@@ -71,7 +71,7 @@ El sistema operativo tiene un orden de funcionamiento:
   - Se termina de forma controlada todos los procesos
   - Se apagan y/o sincronizan los dispositivos
 
-## Llamadas al kernel
+### Llamadas al kernel
 
 Solo en tres situaciones se ejecutan las llamadas al SO
 
@@ -79,7 +79,27 @@ Solo en tres situaciones se ejecutan las llamadas al SO
 2. Cuando una aplicación provoca una excepción
 3. Cuando un dispositivo provoca una interrupción
 
+ El SO configura periódicamente la unterrupción del reloj para evitar perder el
+ control y que un usuario pueda acaparar todos los recursos.
 
+### Librería de sistema
 
+(Ver apuntes)
 
+### Requerimientos de llamadas a sistema
+
+#### Desde el punto de vista del programador
+
+- Tiene que ser como una llamada a función
+- No se puede modificar el contexto
+- Se tiene que guardar y restaurar los registros modificados
+
+#### Desde el punto de vista del kernel
+
+- Se ejecuta en modo privilegiado
+- Se pasan los parámetros y se devuelven lso resultados entre modos de
+  ejecución diferentes
+- Las direcciones de memoria ocupadas por las llamdas a sistema tienen que
+  poder ser variables para soportar diferentes versiones de kernel y diferentes
+  SO
 
