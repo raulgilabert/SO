@@ -1,0 +1,123 @@
+Hecho por Raúl Gilabert Gámez e Ismael El Basli El Khattabi
+
+Pregunta 1.-
+
+mkdir s1 s2 s3 s4 s5
+
+Pregunta 2.-
+
+Se usa ls y para ver los ficheros ocultos ls -a
+
+Pregunta 3.-
+
+-l
+
+Se ve por defecto (en este orden)
+
+- una letra que sirve para identificar si el elemento de la lista impresa es un
+  enlace simbólico (l), directorio (d), dispositivo de caracter (c)
+- permisos para el usuario, los del grupo y el resto de usuarios, siendo estos
+  lectura, escritura y ejecución
+- número de enlaces fuertes del elemento
+- usuario creador
+- grupo creador
+- tamaño
+- fecha y hora de cración
+- nombre
+
+Pregunta 4.-
+
+El profe ha dicho que esto no se hace
+
+Pregunta 5.-
+
+rmdir "nombre del directorio" para eliminar el directorio vacío
+
+ls | grep "nombre del directorio". De esta manera si no sale nada, podemos
+confirmar la ELIMINACIÓN del directorio. Otra opción es ejecutar ls y buscar
+que no aparezca.
+
+Para volver a crearlo se vuelve a usar mkdir "nombre del directorio"
+
+Pregunta 6.-
+
+cat simplemente imprime todo el contenido del archivo. En cambio less lo abre
+en una ventana con paginación que permite moverse línea a línea y permitiendo
+el uso de comandos de vi sin poder modificar el contenido de este.
+
+Pregunta 7.- 
+
+Pide confirmación en caso de intentar sobreescribir un archivo. Para hacer el
+alias hay que poner alias cp="cp -i"
+
+Pregunta 8.-
+
+Todos piden corfirmación en caso de modificar algún archivo existente. alias
+rm="rm -i"
+
+Pregunta 9.-
+
+- Forma octal
+    - Permiso de escritura para todos los usuarios
+	chmod 222 "nombre del archivo"
+    - Permiso de escritura para el grupo del creador y él mismo
+	chmod 220 "nombre del archivo"
+    - Permido de escritura solo para el creador
+	chmod 200 "nombre del archivo"
+- Forma de letras
+     - Permiso de escritura para todos los usuarios
+	chmod ugo-rx+w "nombre del archivo"
+	chmod a-rx+w "nombre del archivo"
+    - Permiso de escritura para el grupo del creador y él mismo
+	chmod ug-rx+w "nombre del archivo"
+    - Permido de escritura solo para el creador
+	chmod u-rx+w "nombre del archivo"
+
+A la hora de ejecutar cat e¡con el archivo al que le hemos dejado solamente
+permiso de escritura sale esto:
+    cat: "nombre del archivo": Premission denied
+
+Los comandos a usar solo para dejar permiso de lectura son estos (para todos
+los usuarios del equipo)
+    chmod 444 "nombre del archivo"
+    chmod a-wx+r "nombre del archivo"
+
+Pide confirmación para eliminar el archivo con protección contra escritura.
+
+Pregunta 10.-
+
+PATH incluye los directorios en los que se encuentran los ejecutables de los
+programas instalados en el equipo
+
+HOME tiene el directorio base del usuario
+
+PWD contiene la dirección dentro del disco del directorio en el que se está en
+el momento
+
+Pregunta 11.-
+
+El carácter separador de directorios es el ':'
+
+Pregunta 12.-
+
+He usado export NOMBRE_VARIABLE=valor_variable y para consultar he utilizado
+echo $"nombre de la variable de entorno"
+
+Pregunta 13.-
+
+Se ha ejecutado la versión descargada.
+
+Pregunta 14.-
+
+Ahora sí. Implica que cualquier ejecutable que se encuentre en el directorio va
+a poder ser ejecutado desde cualquier otro.
+
+Pregunta 15.-
+
+Se ha ejecutado el del sistema.
+
+Pregunta 16.-
+
+Que > sobre escribe el archivo de salida. En cambio, >>, lo añade al final del
+mismo en caso de existir o lo crea en caso que no.
+
