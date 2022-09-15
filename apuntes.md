@@ -132,7 +132,8 @@ sistema y de la máquina. Se puede clasificar en:
 	PID, información para la planificación, información del uso de
 	dispositivos, estadísticas, etc.
     - Hardware
-        Tabla de páginas, program counter, etc.
+        
+	Tabla de páginas, program counter, etc.
 
 ### Concurrencia
 
@@ -163,8 +164,10 @@ el PCB.
 ### Estados de un proceso
 
 - run
+  
     El proceso tiene una CPU asignada y se encuentra en ejecución
 - ready
+    
     El proceso está preparado para ejecutarse pero está a la espera de CPU
 
 
