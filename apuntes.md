@@ -103,3 +103,69 @@ Solo en tres situaciones se ejecutan las llamadas al SO
   poder ser variables para soportar diferentes versiones de kernel y diferentes
   SO
 
+## Proceso
+
+Un proceso es la representación en el SO de un programa en ejecución. Al
+ponerlo en ejecución se le asigna memoria para el código, los datos y la pila
+de este programa. Se inicializan los registros de la CPU, ofrece el acceso a
+los dispositivos.
+
+Para gestionar la información del proceso el sistema usa una estructura de
+datos que se llama PCB (Process Control Block). Hay un PCB reservado para cada
+proceso.
+
+### PCB
+
+Contiene la información necesaria para la gestión del proceso que depende del
+sistema y de la máquina. Se puede clasificar en:
+
+1. Espacio de direcciones
+    Descripción de las regiones del proceso: código, datos, pila, etc.
+
+    - Rangos resercados
+    - Permisos
+    - Información de las optimizaciones seguras o especulativas
+    - Qué hacer si hay accesos de memoria incorrectos
+2. Contexto de ejecución
+    - Software
+	
+	PID, información para la planificación, información del uso de
+	dispositivos, estadísticas, etc.
+    - Hardware
+        Tabla de páginas, program counter, etc.
+
+### Concurrencia
+
+La concurrencia es la capacidad de ejecutar varios procesos de forma
+simultánea.
+
+Si realmente hay varios procesos a la vez es paralelismo (arquitectura
+multiprocesador o milti-core). En cambio, si se trata de un paralelismo virtual
+creado por el SO a través de la compartición de recursos se tratará realmente
+de concurrencia.
+
+Varios procesos son secuenciales si independientemente de la arquitectura que
+tiene el ordenador se ejecuta uno detrás de otro.
+
+### Hilos de ejecución
+
+Cuando se crea un proceso este tiene por defecto un thread de la CPU asignado.
+Este se trata de la instancia/flujo de ejecución del proceso y es la mínima
+unidad de planificaciñon del SO. Cada parte que se puede ejecutar de forma
+independiente se asigna a un thread distinto.
+
+Distintos thread no pueden tener la misma pila por lo que consume un poco más
+de memoria. Lo que comparten entre ellos si son del mismo proceso es únicamente
+el PCB.
+
+---
+
+### Estados de un proceso
+
+- run
+    El proceso tiene una CPU asignada y se encuentra en ejecución
+- ready
+    El proceso está preparado para ejecutarse pero está a la espera de CPU
+
+
+
