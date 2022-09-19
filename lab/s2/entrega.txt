@@ -1,0 +1,9 @@
+Raúl GIlabert Gámez
+
+Pregunta 17.-
+
+Para generar el fichero objeto he tenifo que agregar al gcc el -c
+
+Para que el compilador encuentr el fichero mis_funciones.h solo he tenido que
+hacer el include en el .c con el path relativo hasta el .h. En caso de
+necesitar encontrarlo en otra parte se tiene que añadir el -I y poner el path

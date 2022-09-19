@@ -1,0 +1,6 @@
+all: suma
+
+suma:
+	gcc suma.c
+clean:
+	rm suma
