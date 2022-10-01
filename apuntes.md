@@ -170,5 +170,172 @@ el PCB.
     
     El proceso está preparado para ejecutarse pero está a la espera de CPU
 
+### Propiedades de un proceso
+
+Toda la información de un proceso se guarda en el PCB. Estas se agrupan en
+tres:
+
+- Identidad
+
+    Define quién es el proceso y a qué recursos puede acceder
+- Entorno
+
+    Parámetros que se le dan al ejecutbale y sus variables de entorno
+- Contexto
+    
+    Toda la información que define el estado del proceso y los recursos que usa
+    y ha usado durante la ejecución
+
+#### Identidad
+
+La identidad se define por el PID que es un identificador único para el proceso
+y que se usa como identificador dentro del sistema. Además de eso hay varias
+credenciales, como puden ser el identificador del usuario que lo ha ejecutado y
+el de los grupos a los que pertenece, determinando los derechos del proceso a
+acceder a los recursos del sistena y los ficheros.
+
+## Servicios básicos para gestionar los procesos
+
+Los servicios ofrecen a los usuarios un conjunto de funciones para gestionar
+los procesos:
+
+- Crear/planificar/eliminar procesos
+- Bloquear/desbloquear procesos
+- Proporcionar mecanismos de sincronización
+- Proporcionar mecanismos de comunicación
+
+    Por ej.: Memoria compartida, dispositivos especiales, gestión de signals,
+    etc.
+
+### Creación de procesos
+
+Cuando un proceso crea a otro este se considera su hijo. A su vez, el hijo
+puede seguir creando procesos, de forma que se crea un árbol de procesos.
+
+El SO debe decidir a la hora de crear los hijos lo referente a los recursos, la
+planificación y el espacio de direcciones.
+
+En Linux el padre y el hijo se ejecutan de forma concurrente, el hijo es un
+duplicado del padre pero cada uno tiene su propia memoria física, además tiene
+el mismo contexto de ejecución al momento de la creación (los registros valen
+lo mismo).
+
+### Llamadas a sistema
+
+Las llamadas a sistema son funciones que se peude ejecutar en C al llamar a
+algunas librerías.
+
+#### fork
+
+Crea un nuevo proceso que es un clon del padre.
+
+#### exec (execlp)
+
+Reemplaza el espacio de direcciones del actual proceso con un nuevo programa
+pero manteniendo los identificadores del primero.
+
+Esta llamada a sistema en C tiene diversos parámetros:
+
+El primero es el programa a ejecutar, el segundo es argv[0], y los siguientes
+el resto de argv terminando con `NULL` para marcar que se han acabado los
+argumentos.
+
+#### exit
+
+Termina el proceso que lo llama.
+
+La llamada tiene como único parámetro un número que por convención es 0 si no
+hay errores o cualquier número amyor si lo hay, siendo definido el significado
+por el programador en la documentación.
+
+#### wait/waitpid
+
+Espera a que el proceso hijo acabe, de forma que el proceso actual se bloquea
+hasta ese momento.
+
+La llamada `waitpid` tiene varios parámetros, siendo el primero el PID del
+programa que se está esperando, el segundo un puntero en el que se va a
+guardar el valor que se ha devuelto en la llamada exit del programa y el
+tercero opciones.
+
+#### getpid
+
+Devuelve el PID del proceso.
+
+#### getppid
+
+Devuelve el PID del padre.
+
+### Creación de procesos usando fork
+
+Se mantiene la información escrita en el apartado de creación de procesos pero
+el valor de retorno de la llamada a `fork` es distinto:
+
+- El padre recibe el PID del hijo
+- El hijo recibe un 0
+
+El hijo hereda del proceso padre su espacio de direcciones lógico (la memoria
+física es nueva y contiene una copia de la del padre), la tabla de programación
+de signals, los dispositivos virtuales, las credenciales del usuario y el
+grupo y las variables de entorno. En cambio, no hereda el PID y PPID, los
+contadores internos de utilización y las alarmas y signals pendientes al ser
+estas propias del proceso.
+
+### Teminación de la ejecución/espera a la terminación
+
+EL proceso puede acabar su ejecución de forma voluntaria (llamada a sistema
+`exit`) o involuntariamente (signals). Cuando este quiere acabar su
+finalización de forma voluntaria se liberan sus recursos y se liberan las
+estructuras del kernel reservadas para él con llamada `exit`.
+
+Si quieremos sincronizar el padre con la finalización del proceso hijo se puede
+usar la llamada a sistema `waitpid`, de forma que se bloquea el proceso hasta
+que el hijo termina:
+
+- `waitpid(-1, NULL, 0)` -> Espera a un hijo cualquiera
+- `waitpid(pid_hijo, NULL, 0)` -> Espera al hijo que tiene el PID pid_hijo
+
+En un posible programa como este:
+
+```C
+pid_t h1 = -1, h2 = -1;
+
+h1 = fork();
+
+if (h1 > 0) {
+    h2 = fork();
+}
+
+if (h2 == 0)
+    execlp("sleep", "sleep", "1000", NULL);
+
+waitpid(h2, NULL, 0);
+if (h2)
+    exit(0);
+else
+    exit(1);
+```
+
+De esta manera, en caso de que sea el padre, se hará un nuevo fork y después de
+este si se está en el hijo se ejecutará el `execlp`. El padre de este estará
+esperando hasta el final de su ejecución, ya que en el hijo no esperará al ser
+el PID 0. Al final de esto, si se trata del padre tras la espera executará
+`exit` con un 0 y si es el hijo con un 1.
+
+### Comunicación entre procesos
+
+#### Signals
+
+Enviar evento (kill)
+
+Esperar evento:
+- Espera activa (no tiene llamada a sistema)
+- Espera bloqueante
+
+Se pueden además bloquear eventos, de forma que se quedan pendientes; ignorar
+eventos, "similar" a no recibirlos y configurar la recepción de los eventos.
+
+También se pueden programar signals de forma que se envía SIGALRM después de un
+tiempo x en segundos.
 
 
