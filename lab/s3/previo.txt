@@ -1,0 +1,113 @@
+Raúl Gilabert Gámez                                                    Grupo 13
+
+
+ejemplo_fork1
+
+Se imprime el siguiente texto:
+
+Soy el proceso 7988
+Soy el proceso 7989
+
+
+El primero es escrito por el padre y el siguiente por el hijo ya que en el
+mismo código se ve que se imprime únicamente una vez en cada ejecución y
+entonces, debido al orden creciente del PID se puede ver que es así.
+
+
+ejemplo_fork2
+
+Antes del fork: Soy el proceso 18719
+PADRE: Soy el proceso 18719
+Los DOS: Soy el proceso 18719
+HIJO: Soy el proceso 18720
+Los DOS: Soy el proceso 18720
+
+El primero claramente se sabe que es escrito por el que será el padre ya que es
+el único programa en ejecución. Los otros dos siguientes son también del padre
+ya que en el primero se muestra que es del padre al usar la comprobación de que
+el PID recibido por la función de fork() no es ni 0 ni 1 y el siguiente también
+por tener el mismo PID recibido por getpid(). Los dos últimos son del hijo ya
+que el primero se sabe porque el PID recibido por fork() es 0 y el siguiente
+porque getpid devuelve ese mismo.
+
+
+ejemplo_fork3
+
+Antes del fork: Soy el proceso 27901
+PADRE: Soy el proceso 27901
+Solo lo ejecuta el padre: Soy el proceso 27901
+HIJO: Soy el proceso 27902
+
+El primero, al igual que en el anterior ejemplo, es del padre al no haberse
+hecho todavía el fork(). El siguiente, al ejecutarse si el PID recibido en el
+fork no es  0 o -1 se sabe que es del padre. Después se ejecuta el getpid() de
+después de switch que como se puede ver en el código solo se ejecuta si es el
+padre, ya que en el caso de que sea el hijo (el fork devuelve 0) se hace un
+exit(0) al final del case del switch. Al final está el del hijo ya que el PID
+que se recibe tras la ejecución del fork() en el padre es 0.
+
+
+ejemplo_fork4
+
+Primero se escriben todos los mensajes del padre y después los del hijo.
+Primero acaba el proceso padre.
+
+
+ejemplo_fork5
+
+Antes del fork: Soy el proceso 4252
+PADRE: Soy el proceso 4252
+HIJO: Soy el proceso 4253
+HIJO:La variable_global vale A y la local a
+PADRE:La variable_global vale A y la local a
+Solo lo ejecuta el padre: Soy el proceso 4252
+
+El primero es ejecutado por el padre al no haberse ejecutado el fork(). El
+siguiente también al ejecutarse si el PID recibido por el fork es distinto a 0
+o -1. Seguidamente se ejecuta todo el código del hijo al tener el waitpid() en
+el padre. Finalmente, al ejecutarse el exit(0) en el hijo se ejecuta el final
+del padre.
+
+
+ejemplo_fork6
+
+Hay 10000 impresiones primero del padre y del hijo intercaladas mostrando su
+valor de la variable global, siendo minúscula en el padre y mayúscula en el
+hijo, se incrementa en 1 el valor de la global y se repite 10 veces hasta
+completar las 100000 iteraciones en cada uno de las dos ejecuciones.
+
+No se puede asegurar que sea exactamente el mismo contenido en el archivo en
+diferentes ejecuciones. Esto se debe a que puede que el sistema operativo dé
+un poco más de tiempo de ejecución a alguno de los dos procesos y que, por
+tanto, no aparezcan del todo intercaladas las impresiones de las dos
+ejecuciones.
+
+
+ejemplo_fork7
+
+No compila porque variable_local no está declarada dentro de la función
+Escribe_variables(). No tiene nada que ver del hecho de crear procesos, sino de
+que esa variable local no se encuentra dentro del espacio de trabajo de la
+función en la que se llama. El código se puede modificar añadiendo el parámetro
+en la función de la variable local.
+
+
+ejemplo_exec1
+
+Primero aparece el PID del programa en ejecución y después el resultado de
+ejecutar el comando ls -l
+
+Solo aparece una vez ya que la que sería la segunda ejecución no s eproduce por
+haber hecho antes el exec(), de forma que se cambia el programa en ejecución.
+
+
+ejemplo_exec2
+
+Aparece primero el mensaje del programa ejemplo_exec2 mostrando su PID, después
+se vuelve a mostrar el PID pero esta vez tras ejecutarse ejemplo_fork1 y,
+debido a que este hace un fork de sí mismo se imprime el PID del hijo.
+
+
+man
+
+A las secciones 2 y 3

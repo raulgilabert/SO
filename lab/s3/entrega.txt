@@ -1,0 +1,239 @@
+Pregunta 18.-
+
+Un proceso puede saber el pid de sus hijos a partir del número que devuelve la
+función fork(). Para cosultar el PID del propio proceso se usa la función
+getpid().
+
+
+Pregunta 19.-
+
+El código después de la llamada execlp() solo se ejecutará en caso de que este
+falle.
+
+
+Pregunta 20.-
+
+attr/  cwd/  fd/  fdinfo/  map_files/  net/  ns/  root/  task/
+
+he usado ls -d */
+
+
+Pregunta 21.-
+
+Fichero status
+
+Name:	myPS
+Umask:	0022
+State:	R (running)
+Tgid:	30133
+Ngid:	0
+Pid:	30133
+PPid:	16854
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 8 12 13 16 17 24 101 1000 
+NStgid:	30133
+NSpid:	30133
+NSpgid:	30133
+NSsid:	16854
+VmPeak:	   2316 kB
+VmSize:	   2184 kB
+VmLck:	      0 kB
+VmPin:	      0 kB
+VmHWM:	    712 kB
+VmRSS:	    712 kB
+RssAnon:	     72 kB
+RssFile:	    640 kB
+RssShmem:	      0 kB
+VmData:	     56 kB
+VmStk:	    132 kB
+VmExe:	      4 kB
+VmLib:	   1456 kB
+VmPTE:	     36 kB
+VmSwap:	      0 kB
+HugetlbPages:	      0 kB
+CoreDumping:	0
+THP_enabled:	1
+Threads:	1
+SigQ:	0/62903
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000000000
+SigCgt:	0000000000000000
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	ff
+Cpus_allowed_list:	0-7
+Mems_allowed:	00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	0
+nonvoluntary_ctxt_switches:	1875
+
+
+fichero cmdline
+
+./myPSraulg
+
+El contenido del fichero environ es el mismo que da como resultado el comando
+env en el directorio del ejecutable.
+
+Está en estado running.
+
+Tiempo de CPU en modo usuario: 102930
+
+
+Pregunta 22.-
+
+No apuntan a nada ya que están en estado zombie
+
+Pregunta 23.- 
+
+environ:
+
+Está vacío
+
+status:
+
+Name:	ps
+State:	Z (zombie)
+Tgid:	30134
+Ngid:	0
+Pid:	30134
+PPid:	30133
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	0
+Groups:	4 8 12 13 16 17 24 101 1000 
+NStgid:	30134
+NSpid:	30134
+NSpgid:	30133
+NSsid:	16854
+Threads:	1
+SigQ:	0/62903
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000000000
+SigCgt:	0000000073d1fef9
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	ff
+Cpus_allowed_list:	0-7
+Mems_allowed:	00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	1
+nonvoluntary_ctxt_switches:	0
+
+cmdline:
+
+está vacío
+
+Está en estado zombie
+
+
+Pregunta 24.-
+
+cwd apunta al directorio en el que está el fichero que ha lanzado el proceso.
+exe apunta al ejecutable padre. La diferencia respecto al anterior caso es que
+en esta situación sí que se apunta a algo. Esto se debe a que el proceso está
+en estado running.
+
+
+Pregunta 25.-
+
+environ:
+
+MAIL=/var/mail/raulgUSER=raulgCSF_TObjDefaults=/usr/share/opencascade/resources/StdResourceSHLVL=1CSF_XSMessage=/usr/share/opencascade/resources/XSMessageCSF_XCAFDefaults=/usr/share/opencascade/resources/StdResourceHOME=/home/raulgMOTD_SHOWN=pamOLDPWD=/home/raulg/universidad/Q3/SO/labMMGT_CLEAR=1CSF_TObjMessage=/usr/share/opencascade/resources/TObjCSF_ShadersDirectory=/usr/share/opencascade/resources/ShadersCSF_MDTVTexturesDirectory=/usr/share/opencascade/resources/TexturesDRAWHOME=/usr/share/opencascade/resources/DrawResourcesCSF_IGESDefaults=/usr/share/opencascade/resources/XSTEPResourceCASROOT=/usrMOZ_PLUGIN_PATH=/usr/lib/mozilla/pluginsLOGNAME=raulg_=/home/raulg/universidad/Q3/SO/lab/s3/./myPSCSF_LANGUAGE=usTERM=xterm-kittyLC_COLLATE=CPATH=/home/raulg/.cargo/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/sbinGTK3_MODULES=xapp-gtk3-moduleDISPLAY=:0CSF_XmlOcafResource=/usr/share/opencascade/resources/XmlOcafResourceLANG=en_US.UTF-8XAUTHORITY=/home/raulg/.config/ly/lyxauthCSF_StandardDefaults=/usr/share/opencascade/resources/StdResourceCSF_PluginDefaults=/usr/share/opencascade/resources/StdResourceSHELL=/bin/zshCSF_SHMessage=/usr/share/opencascade/resources/SHMessageCSF_STEPDefaults=/usr/share/opencascade/resources/XSTEPResourcePWD=/home/raulg/universidad/Q3/SO/lab/s3CSF_StandardLiteDefaults=/usr/share/opencascade/resources/StdResourceJAVA_HOME=/usr/lib/jvm/openjdk17XDG_DATA_DIRS=/home/raulg/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/shareCSF_MIGRATION_TYPES=/usr/share/opencascade/resources/StdResource/MigrationSheet.txtCSF_DrawPluginDefaults=/usr/share/opencascade/resources/DrawResourcesCSF_OCCTResourcePath=/usr/share/opencascade/resourcesDRAWDEFAULT=/usr/share/opencascade/resources/DrawResources/DrawDefaultCSF_EXCEPTION_PROMPT=1KITTY_WINDOW_ID=2WINDOWID=25165839COLORTERM=truecolorKITTY_PID=2357TERMINFO=/usr/lib/kitty/terminfoKITTY_INSTALLATION_DIR=/usr/lib/kittyZSH=/home/raulg/.oh-my-zshGPG_TTY=/dev/pts/2INCLUSIONS=/home/raulg/universidad/Q2/PRO2/laboratorio/inclusionsOBJECTS=/home/raulg/universidad/Q2/PRO2/laboratorio/objectesPAGER=lessLESS=-RLSCOLORS=GxfxcxdxbxegedabagacadLS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+
+status:
+
+Name:	myPS
+Umask:	0022
+State:	R (running)
+Tgid:	15011
+Ngid:	0
+Pid:	15011
+PPid:	15010
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	64
+Groups:	4 8 12 13 16 17 24 101 1000 
+NStgid:	15011
+NSpid:	15011
+NSpgid:	15010
+NSsid:	16854
+VmPeak:	   2184 kB
+VmSize:	   2184 kB
+VmLck:	      0 kB
+VmPin:	      0 kB
+VmHWM:	     80 kB
+VmRSS:	     80 kB
+RssAnon:	     80 kB
+RssFile:	      0 kB
+RssShmem:	      0 kB
+VmData:	     56 kB
+VmStk:	    132 kB
+VmExe:	      4 kB
+VmLib:	   1456 kB
+VmPTE:	     36 kB
+VmSwap:	      0 kB
+HugetlbPages:	      0 kB
+CoreDumping:	0
+THP_enabled:	1
+Threads:	1
+SigQ:	0/62903
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000000000
+SigCgt:	0000000000000000
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	ff
+Cpus_allowed_list:	0-7
+Mems_allowed:	00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	0
+nonvoluntary_ctxt_switches:	171
+
+cmdline:
+
+./myPSraulg
+
+La diferencia es que esta vez tanto environ como cmdline tienen contenido y que
+en status pone que está en estado running. Esto se debe a esta diferencia de
+estado.
+
+
+
+
+
