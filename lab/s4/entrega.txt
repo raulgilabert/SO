@@ -1,0 +1,61 @@
+Entrega previo
+
+Alarm1
+
+1.- 
+
+A los 5 segundos no pasa nada con alarm1. A los 10 segundos se para el programa
+y se imprime 
+
+[1]    32423 alarm      ./alarm1
+
+2.- 
+
+El comportamiento es distinto, el mensaje que se recibe en la terminal es este:
+
+[1]    2272 killed     ./alarm1
+
+El proceso que se encarga de mostrar los mensajes de cuando muere el proceso es
+el mismo del shell. Usa la llamada a sistema waitpid que devuelve en el puntero
+la información del exit del proceso.
+
+4.-
+
+No es necesario ya que se ejecuta por defecto al acabar en caso de que no esté
+escrito. No se ejecuta ya que en caso de no ser matado el proceso por ningún
+signal ya lo hace el alarm.
+
+
+Alarm2
+
+1.-
+
+Que el incremento cada 10 segundos que tiene el proceso se hace instantáneo
+cada vez que se ejecuta el comando. El control de tiempo no ha funciona como
+pretendía el código.
+
+2.- 
+
+Sí que se puede modificar a través de la función.
+
+3.-
+
+Se podría arreglar comprobando si el valor que devuelve alarm() es diferente de
+0
+
+Alarm3
+
+1.-
+
+Los dos, Lo he comprobado manfanfo un kill -ALRM a cada uno de ellos
+
+Alarm4
+
+1.- 
+
+Solamente el proceso hijo los programa y son 10. Solo lo recibe el hijo ya
+que es el que lo ha programado. El hijo simplemente imprime el aviso. Lo he
+comprobado ejecutando kill -ALRM con el padre que hace que empiece el contador
+suyo y deje de estar en espera.
+
+

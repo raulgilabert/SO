@@ -111,6 +111,8 @@ de este programa. Se inicializan los registros de la CPU, ofrece el acceso a
 los dispositivos.
 
 Para gestionar la información del proceso el sistema usa una estructura de
+
+Para gestionar la información del proceso el sistema usa una estructura de
 datos que se llama PCB (Process Control Block). Hay un PCB reservado para cada
 proceso.
 
@@ -219,8 +221,6 @@ En Linux el padre y el hijo se ejecutan de forma concurrente, el hijo es un
 duplicado del padre pero cada uno tiene su propia memoria física, además tiene
 el mismo contexto de ejecución al momento de la creación (los registros valen
 lo mismo).
-
-### Llamadas a sistema
 
 Las llamadas a sistema son funciones que se peude ejecutar en C al llamar a
 algunas librerías.
@@ -338,4 +338,92 @@ eventos, "similar" a no recibirlos y configurar la recepción de los eventos.
 También se pueden programar signals de forma que se envía SIGALRM después de un
 tiempo x en segundos.
 
+##### Modificar signals
+
+
+```C
+sigset_t m; // Declaración de m como signal
+sigemptyset(&m) // -> 0 todo
+sigaddset(&m, SIGALRM) // 1 en sigalrm
+sigprocmask(SIG_BLOCK, &m, NULL) // bloquear SIGALRM
+sigprocmask(SIG_SET, &m, NULL) // Todos los signals bloqueados menos SIGALRM
+sigprocmask(SIG_UNBLOCK, &m, NULL) // desbloquear SIGALRM
+```
+ Para operar con más de un signal a la vez con las operaciones se puede usar
+ `sigaddset()` con la misma máscara de signals.
+
+##### Espera (sincronización)
+
+###### Opción 1
+
+Espera activa: se consulta en bucle el valor de una varuable que se modifica al
+recibir un evento, siendo la variable gloabl y el evento una función
+`sigaction()`.
+
+###### Opción 2
+
+En caso de saber el tiempo de necesidad de espera se usa `sigsuspend`
+
+```C
+sigmeptyset(&mask);
+sigaddset(&mask, SIGALRM); // Se asigna SIGALRM
+sigprocmask(SIG_SETMASK, &mask, NULL);
+sigaction(SIGALRM, &trat, NULL);
+
+...
+
+sigfillset(&mask); // Se ponen todos a 1
+sigdelset(&mask, SIGALRM); // SIGALRM se pone a 0
+alarm(2); // 2 segundos de espera
+
+sigsuspend(&mask);
+
+```
+Los signals con bit en 1 no se considera temporalmente bloqueados. Los que
+están con un 0 son los que pueden desbloquear.
+
+En caso de hacer un cambio de espera blocante a activa además de meter el while
+en el lugar del sigsuspend hay que hacer un sigprocmask para colocar los
+signals que pueden reactivar el programa.
+
+### Gestión interna
+
+Para gestionar los procesos se usan ciertas estructuras de datos para
+representar sus propiedad es y recursos (PCB) y para representat y gestionar
+thread (esto depende del SO).
+
+Además de eso hay diversas estructuras de gestión que organizan los PCB en
+función de su estado o necesidades de organización del sistema. Generalmente
+son listas o colas pero pueden incluir estructuras más complejas como tablas de
+hash, árboles, etc.
+
+Hay que tener en cuenta la eficiencia de estas estructuras, de forma que hay
+que ver si son rápidas las inserciones o eliminaciones, las búsquedas, los
+índices de búsqueda, PID, usuario, etc.
+
+Además se tiene que tener en cuenta la escalabilidad de las estructuras, es
+decir, saber cuántos procesos se pueden tener activos en el sistema y la
+memoria necesaria para estas estructuras.
+
+También se necesitarán algoritmos de planificación que indiquen como gestionar
+las estructuras y también mecanismo que apliquen las decisiones que toma el
+planificador.
+
+#### Estructuras de organización
+
+El SO organiza los PCB de los procesos en estructuras de gestión: vectores,
+listas, colas, tablas de hash, árboles, etc. en función de las necesidades del
+SO.
+
+Los procesos que van en un mismo orden suelen estar organizados en colas o
+listas que permiten mantener un orden:
+
+- Cola de procesos: Todos los procesos creados en el sistema
+- Cola de procesos: Listos para ejecutarse (ready): procesos a la espera de CPU
+- Colas de dispositivos: Procesos a la espera de datos de algún dispositivo de
+  E/S
+
+El SO mueve los procesos de una estructura a otra dependiendo de lo que sea
+necesario, por ejemplo: cuando temina una operación de E/S el proceso se mueve
+de la cola del dispositivo a la cola de ready.
 
