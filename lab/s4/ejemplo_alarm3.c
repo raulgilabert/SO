@@ -24,31 +24,43 @@ funcion_alarma (int signal)
 int
 main (int argc, char *argv[])
 {
-  struct sigaction sa;
-  sigset_t mask;
+    struct sigaction sa;
+    sigset_t mask;
 
-  /* EVITAMOS QUE NOS LLEGUE EL SIGALRM FUERA DEL SIGSUSPEND */
-  sigemptyset (&mask);
-  sigaddset (&mask, SIGALRM);
-  sigprocmask (SIG_BLOCK, &mask, NULL);
+    /* EVITAMOS QUE NOS LLEGUE EL SIGALRM FUERA DEL SIGSUSPEND */
+    sigemptyset (&mask);
+    sigaddset (&mask, SIGALRM);
+    sigprocmask (SIG_BLOCK, &mask, NULL);
 
-  /* REPROGRAMAMOS EL SIGNAL SIGALRM */
-  sa.sa_handler = &funcion_alarma;
-  sa.sa_flags = SA_RESTART;
-  sigfillset (&sa.sa_mask);
+    int pid;
+    if ((pid = fork ()) < 0)
+        error_y_exit ("fork", 1);
 
-  if (sigaction (SIGALRM, &sa, NULL) < 0)
-    error_y_exit ("sigaction", 1);
 
-  if (fork () < 0)
-    error_y_exit ("fork", 1);
-  while (segundos < 100)
-    {
-      alarm (10);
-      sigfillset (&mask);
-      sigdelset (&mask, SIGALRM);
-      sigdelset (&mask, SIGINT);
-      sigsuspend (&mask);
+    if (pid == 0) {
+        /* REPROGRAMAMOS EL SIGNAL SIGALRM */
+        sa.sa_handler = &funcion_alarma;
+        sa.sa_flags = SA_RESTART;
+        sigfillset (&sa.sa_mask);
+
+        if (sigaction (SIGALRM, &sa, NULL) < 0)
+            error_y_exit ("sigaction", 1);
+    
     }
-  exit (1);
+    while (segundos < 100)
+    {
+        alarm (10);
+    
+        if (pid == 0) {
+                sigprocmask(SIG_UNBLOCK, &mask, NULL);
+                execlp("./bucle", "./bucle");
+            }
+
+
+        sigfillset (&mask);
+        sigdelset (&mask, SIGALRM);
+        sigdelset (&mask, SIGINT);
+        sigsuspend (&mask);
+    }
+    exit (1);
 }

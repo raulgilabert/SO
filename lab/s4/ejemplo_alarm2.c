@@ -41,6 +41,7 @@ main (int argc, char *argv[])
   if (sigaction (SIGALRM, &sa, NULL) < 0)
     error_y_exit ("sigaction", 1);
 
+
   while (segundos < 100)
     {
       alarm (10);               /* Programamos la alarma para dentro de 10 segundos */

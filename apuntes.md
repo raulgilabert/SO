@@ -36,7 +36,7 @@ Las llamadas a sistema permiten la comunicación entre la libreria de C y el
 sistema operativo (aunque en EC se estudian las llamdas de sistema operativo a
 hardware).
 
-El sistema operativo enternamente define estructiras de datos para gestionar el
+El sistema operativo internamente define estructuras de datos para gestionar el
 hardware y algoritmos para utilizarlo. En cambio, externamente, ofrece un
 conjunto de funciones para acceder a su funcionalidad (o servicios) de gestión
 de recursos.
@@ -82,10 +82,6 @@ Solo en tres situaciones se ejecutan las llamadas al SO
  El SO configura periódicamente la unterrupción del reloj para evitar perder el
  control y que un usuario pueda acaparar todos los recursos.
 
-### Librería de sistema
-
-(Ver apuntes)
-
 ### Requerimientos de llamadas a sistema
 
 #### Desde el punto de vista del programador
@@ -97,7 +93,7 @@ Solo en tres situaciones se ejecutan las llamadas al SO
 #### Desde el punto de vista del kernel
 
 - Se ejecuta en modo privilegiado
-- Se pasan los parámetros y se devuelven lso resultados entre modos de
+- Se pasan los parámetros y se devuelven los resultados entre modos de
   ejecución diferentes
 - Las direcciones de memoria ocupadas por las llamdas a sistema tienen que
   poder ser variables para soportar diferentes versiones de kernel y diferentes
@@ -111,8 +107,6 @@ de este programa. Se inicializan los registros de la CPU, ofrece el acceso a
 los dispositivos.
 
 Para gestionar la información del proceso el sistema usa una estructura de
-
-Para gestionar la información del proceso el sistema usa una estructura de
 datos que se llama PCB (Process Control Block). Hay un PCB reservado para cada
 proceso.
 
@@ -122,20 +116,21 @@ Contiene la información necesaria para la gestión del proceso que depende del
 sistema y de la máquina. Se puede clasificar en:
 
 1. Espacio de direcciones
+
     Descripción de las regiones del proceso: código, datos, pila, etc.
 
-    - Rangos resercados
+    - Rangos reservados
     - Permisos
     - Información de las optimizaciones seguras o especulativas
     - Qué hacer si hay accesos de memoria incorrectos
 2. Contexto de ejecución
     - Software
-	
+
 	PID, información para la planificación, información del uso de
 	dispositivos, estadísticas, etc.
     - Hardware
-        
-	Tabla de páginas, program counter, etc.
+
+    Tabla de páginas, program counter, etc.
 
 ### Concurrencia
 
@@ -171,6 +166,15 @@ el PCB.
 - ready
     
     El proceso está preparado para ejecutarse pero está a la espera de CPU
+
+- blocked
+    
+    Está a la espera de un evento que reciba por signal o con un acción de E/S
+
+- zombie
+    El proceso ha terminado pero está a la espera de que el padre lo compruebe
+    por si este requiere usar algo de la información que genera el fin de
+    ejecución
 
 ### Propiedades de un proceso
 
@@ -227,7 +231,8 @@ algunas librerías.
 
 #### fork
 
-Crea un nuevo proceso que es un clon del padre.
+Crea un nuevo proceso que es un clon del padre que se ejecuta de forma
+concurrente a este.
 
 #### exec (execlp)
 
@@ -295,6 +300,19 @@ que el hijo termina:
 - `waitpid(-1, NULL, 0)` -> Espera a un hijo cualquiera
 - `waitpid(pid_hijo, NULL, 0)` -> Espera al hijo que tiene el PID pid_hijo
 
+### Mutación de ejecutable
+
+Al hacer fork el espacio de direcciones es el mismo, por lo que si se quiere
+ejecutar otro código el proceso debe mutar a ese otro. Esto se hace con las
+llamadas a sistema de tipo exec.
+
+En esta asignatura se usará principalmente la llamada execlp que muta el
+ejecutable por otro manteniendo el proceso. De esta forma todo el contenido del
+espacio de direcciones cambia, reiniciando el contador de programa a la primera
+instrucción de este. Se matiene todo lo relacionado con la indentidad del
+proceso, incluyendo los signals pendientes pero se define por defecto la tabla
+de programación de signals.
+
 En un posible programa como este:
 
 ```C
@@ -322,45 +340,154 @@ esperando hasta el final de su ejecución, ya que en el hijo no esperará al ser
 el PID 0. Al final de esto, si se trata del padre tras la espera executará
 `exit` con un 0 y si es el hijo con un 1.
 
-### Comunicación entre procesos
+## Comunicación entre procesos
 
-#### Signals
+Los procesos pueden ser independientes o cooperar entre sí. Esta cooperación
+puede ser útil por ejemplo para compartir información entre ellos, acelerar la
+computación que realizan o por simple modularidad. Para permitir esta
+cooperación obviamente lo necesario es que puedan comunicarse. Esto se hace de
+dos formas principalmente:
 
-Enviar evento (kill)
+- Memoria compartida
+- Paso de mensajes
+
+### Signals
+
+Los signals son un método de comunicación entre procesos a través de mensajes a
+través de notificaciones que pueden ser mandadas tanto por el kernel como por
+el mismo u otro proceso del usuario.
+
+### Tipo de signals
+
+Cada posible evento tiene un signal asociado que está predefinido por el
+kernel a excepción de dos que están a la disposición del programador para
+usarlos como quiera: `SIGUSR1`  y `SIGUSR2`. Cada proceso puede tratar cada
+signal de manera diferente, teniendo cada uno un tratamiento pot defecto pero
+que el programador puede cambiarlos a excepción de `SIGKILL` y `SIGSTOP`.
+
+EL tratamiento de los signals se basa en como si fueran interrupciones
+provocadas por software. Cuando el proceso recibe un signal se interrumpe la
+ejecución de lo que fuera que se estuviera ejecutando y se ejecuta el
+tratamiento del signal y al acabar (en caso de que no se haga ningún exit)
+continúa por el mismo sitio del código por el que iba.
+
+Además los procesos pueden bloquear o desbloquear los signals para decidir
+cuáles tratar y cuáles no a excepción de `SIGKILL` y `SIGSTOP` en cualquier
+caso y `SIGFPE`, `SIGILL` y `SIGSEGV` si son causados por una excepción. En
+caso de que el proceso reciba un signal que haya sigo bloqueado el proceso no
+lo recibe y lo marca como pendiente de tratar, de forma que si en algún momento
+lo desbloquea se ejecuta la rutina de tratamiento de inmediato.
+
+### Interfaz relacionada con los signals
+
+- Enviar evento (kill)
+- Para capturar o reprogramar un signal en concreto se usa la función de C
+`sigaction`.
+- El bloqueo o desbloqueo de signals se hace usando `sigprocmask`.
+- La espera hasta que llegue un evento bloqueado el programa se hace con
+  `sigsuspend`.
+- Para programa el envío automático del signal `SIGALRM` se hace usando la
+  función `alarm`.
 
 Esperar evento:
 - Espera activa (no tiene llamada a sistema)
 - Espera bloqueante
 
-Se pueden además bloquear eventos, de forma que se quedan pendientes; ignorar
-eventos, "similar" a no recibirlos y configurar la recepción de los eventos.
-
 También se pueden programar signals de forma que se envía SIGALRM después de un
 tiempo x en segundos.
 
-##### Modificar signals
+#### Struct sigaction
 
+Este struct tiene diversos campos pero solo vamos a fijarnos en 3 importantes:
+
+- `sa_handler`
+
+    Este puede tomar 3 valores:
+
+    - `SIG_IGN`: ignora el signal al recibirlo
+    - `SIG_DFL`: usa el tratamiento por defecto del signal
+    - función de usuario con una cabecera predefinida: `void nombre_funcion(int
+      s)`
+
+- `sa_mask`
+
+    Sirve para determinar los signals que serán añadidos a la máscara de
+    signals que el proceso tiene bloqueados. Si esta máscara está vacía solo se
+    añade el signal que se está capturando. Al salir del tratamiento de la
+    función se restaura la máscara que había antes de entrar.
+
+- `sa_flags`
+
+    Sirve para configurar el comportamiento:
+
+    - Si se mantiene como 0 usa la configuración por defecto del signal
+    - `SA_RESETHAND` después de tratar se restaura el tratamiento por defecto
+    - `SA_RESTART` reinicia la llamada que ha bloqueado el programa
+
+### Estructuras de datos del kernel
+
+La gestión de los signals es única para cada proceso, por lo que esta
+información está guardad en el PCB de este. De forma que cada proceso tiene una
+tabla de programación de signals en donde se indica la acción a realizar cuando
+se recibe el evento, un bitmap de eventos pendientes que funciona como booleano
+y no contador, un único temporizador para la alarma y una máscara de bits que
+indica los signals que hay que tratar.
+
+#### Modificar signals
 
 ```C
 sigset_t m; // Declaración de m como signal
-sigemptyset(&m) // -> 0 todo
-sigaddset(&m, SIGALRM) // 1 en sigalrm
-sigprocmask(SIG_BLOCK, &m, NULL) // bloquear SIGALRM
-sigprocmask(SIG_SET, &m, NULL) // Todos los signals bloqueados menos SIGALRM
-sigprocmask(SIG_UNBLOCK, &m, NULL) // desbloquear SIGALRM
+sigemptyset(&m) // Pone la máscara de signals a 0
+sigaddset(&m, SIGALRM) // En este caso pone el bit de SIGALRM a 1
+sigdelset(&m, SIGALRM) // Pone el bit de SIGALRM a 0
+int sig_alrm = sigismember(&m, SIGALRM) // Devuelve 1 si el signal está en la
+máscara
+sigprocmask(SIG_BLOCK, &m, NULL) // Bloquea únicamente el signal tratado por la
+máscara
+sigprocmask(SIG_SETMASK, &m, NULL) // Bloquea todos los signals excepto el
+tratado por la máscara
+sigprocmask(SIG_UNBLOCK, &m, NULL) // desbloquear el signal de la máscara
 ```
  Para operar con más de un signal a la vez con las operaciones se puede usar
  `sigaddset()` con la misma máscara de signals.
 
-##### Espera (sincronización)
+De esta manera un programa para capturar un signal en específico podría ser
+así:
 
-###### Opción 1
+```C
+void main() {
+    char buffer[128];
+    struct sigaction sa;
+    sigset_t mask;
+    sigemptyset(&mask);
+    sa.sa_mask = mask;
+    sa.sa_flags = 0;
+    sa.sa_handler = f_sigint;
+
+    sigaction(SIGINT, &trat, NULL); // Cuando llegue SIGINT se ejecutará f_sigint
+
+    while (1) {
+    sprintf(buffer, "Haciendo cositas \n");
+    write(1, buffer, strlen(buffer));
+    }
+}
+
+void f_sigint(int s) {
+    char buffer[128];
+    sprintf(buffer, "SIGINT RECIBIDO! \n");
+    exit(0);
+}
+```
+
+#### Espera (sincronización)
+
+#### Opción 1
 
 Espera activa: se consulta en bucle el valor de una varuable que se modifica al
 recibir un evento, siendo la variable gloabl y el evento una función
 `sigaction()`.
 
-###### Opción 2
+##### Opción 2
 
 En caso de saber el tiempo de necesidad de espera se usa `sigsuspend`
 
@@ -386,11 +513,17 @@ En caso de hacer un cambio de espera blocante a activa además de meter el while
 en el lugar del sigsuspend hay que hacer un sigprocmask para colocar los
 signals que pueden reactivar el programa.
 
-### Gestión interna
+En el caso del programa de ejemplo que se ha puesto primero se configura para
+que SIGALRM tenga lla configuración del sigaction `trat`. Se realizan las
+operaciones que estén entre los ... y después de eso se bloquean todos los
+signals excepto SIGALRM y se configura la alarma de 2 segundos y bloqueando el
+proceso.
+
+## Gestión interna
 
 Para gestionar los procesos se usan ciertas estructuras de datos para
-representar sus propiedad es y recursos (PCB) y para representat y gestionar
-thread (esto depende del SO).
+representar sus propiedades y recursos (PCB) y para representar y gestionar los
+threads (esto depende del SO).
 
 Además de eso hay diversas estructuras de gestión que organizan los PCB en
 función de su estado o necesidades de organización del sistema. Generalmente
@@ -409,7 +542,7 @@ También se necesitarán algoritmos de planificación que indiquen como gestiona
 las estructuras y también mecanismo que apliquen las decisiones que toma el
 planificador.
 
-#### Estructuras de organización
+### Estructuras de organización
 
 El SO organiza los PCB de los procesos en estructuras de gestión: vectores,
 listas, colas, tablas de hash, árboles, etc. en función de las necesidades del
@@ -419,11 +552,90 @@ Los procesos que van en un mismo orden suelen estar organizados en colas o
 listas que permiten mantener un orden:
 
 - Cola de procesos: Todos los procesos creados en el sistema
-- Cola de procesos: Listos para ejecutarse (ready): procesos a la espera de CPU
+- Cola de procesos listos para ejecutarse (ready): procesos a la espera de CPU.
+  En muchos SO esto puede no ser solo 1 única cola sino varias ya que los
+  procesos pueden estar agrupadas por clases, prioridades, etc.
 - Colas de dispositivos: Procesos a la espera de datos de algún dispositivo de
   E/S
 
 El SO mueve los procesos de una estructura a otra dependiendo de lo que sea
 necesario, por ejemplo: cuando temina una operación de E/S el proceso se mueve
 de la cola del dispositivo a la cola de ready.
+
+### Planificación
+
+La planificación del SO es llevada por la Política de planificación que se
+ejecuta cada poco tiempo (cada 10ms por ejemplo), por lo que debe de ejecutarse
+de forma muy rápida. Esto tiene el criterio que evalua si hay que cambiar el
+proceso que esté en la CPU, qué proceso se pone, etc.
+
+Hay determinadas situación que provocan la ejecución de la planificación del
+sistema:
+
+- Programas en RUN que no pueden continuar la ejecución como puede ser la
+  terminación del programa o el bloqueo de este.
+- Forzado de la sustitución del programa en CPU por criterio del SO
+  dependiendo de la política.
+
+Hay dos tipos de políticas de planificación: las peemptibas (la política le
+quita la CPU al proceso) y no preemptivas (la política no le quita la CPU al
+proceso).
+
+Además de esto hay dos tipos distintos de procesos: procesos de cálculo
+(consumen más tiempo haciendo cálculo que E/S) y procesos de E/S (comsumen más
+tiempo con E/S que con cálculo).
+
+#### Mecanismos usados por el planificados
+
+Cuando un proceso deja la CPU y se pone otro proceso en su lugar se produce un
+cambio de contexto. En este el sistema tiene que salvar el estado del proceso
+que deja la CPU y restaurar el estado del proceso que pasa a ejecutarse. Este
+contexto que se guarda suele hacerse en el PCB en un espacio que hay dedicado a
+guardar esta información.
+
+Ya que el cambio de contexto no es tiempo útil de la aplicación este debe de
+ser rápido con normalmente soporte de hardware para hacerlo permitiendo guardar
+todos los registros o restaurarlos de golpe, además que hay difernecias entre
+cambio de contexto entre thread del mismo proceso o de distintos.
+
+#### Tipos de planificación
+
+##### Round Robin (RR)
+
+El sistema tiene organizados los procesos en función del estado y encolados por
+orden de llegada. Cada proceso tiene la CPU durante un tuepo (time quantum)
+típicamente de 10 o 100 ms. El planificados usa una interrupción de reloj para
+ir cambiando el proceso en ejecución.
+
+De esta manera tenemos tres tipos de eventos que activan la política RR:
+
+- Bloqueo de proceso
+- Terminación de proceso
+- Terminación del quantum
+
+Por tanto esta política es peemptiva o apropiativa.
+
+Cuando el proceso está RUN y deja la CPU puede pasar a varios casos:
+
+- En caso de que sea el bloqueo de proceso este se añade a la cola de
+  bloqueados hasta que termine el acceso al dispositivo
+- Si es la terminación el proceso pasa al estado de zombie en Linux
+- Si es por terminación del quantum el proceso se añade al final de la cola de
+  READY
+
+Esta política se comporta diferente dependiendo del quantum, ya que si este es
+muy grande prácticamente sería una ejecución seuencial hasta el bloqueo o
+terminación del proceso por tener el quantum grande. En cambio, si es muy
+pequeño habría demasiado tiempo perdido en los cambios de contexto respecto al
+poco tiempo de ejecución que se tendría.
+
+##### Completely Fair Scheduling
+
+Este es el algoritmo que se usa en las versiones actuales de Linux con un
+máximo de tiempo de uso consecutivo de CPU variable en base a los procesos que
+compiten por la CPU, sacando el cálculo del tiempo consumido de CPU entre el
+número de procesos en competición con una prioridad del proceso en base a la
+distancia respecto al tiempo teórico de CPU (cuando más lejos mayor prioridad).
+Además crea grupos de procesos permitiendo contabilizar el uso de CPU de cada
+grupo de forma que se evita que un usuario monopolice la máquina.
 

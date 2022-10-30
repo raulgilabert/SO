@@ -1,3 +1,25 @@
+Entrega clase
+
+28.-
+
+Ahora el padre para su proceso.
+
+29.-
+
+La tabla de tratamientos se vuelve la que es por defecto al igual que con la
+reprogramación de signals.
+
+30.-
+
+Es concurrente
+
+
+
+
+
+
+
+
 Entrega previo
 
 Alarm1
@@ -57,5 +79,4 @@ Solamente el proceso hijo los programa y son 10. Solo lo recibe el hijo ya
 que es el que lo ha programado. El hijo simplemente imprime el aviso. Lo he
 comprobado ejecutando kill -ALRM con el padre que hace que empiece el contador
 suyo y deje de estar en espera.
-
 
