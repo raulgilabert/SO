@@ -1,0 +1,55 @@
+0000000000003df8 d _DYNAMIC
+0000000000004000 d _GLOBAL_OFFSET_TABLE_
+0000000000002000 R _IO_stdin_used
+                 w _ITM_deregisterTMCloneTable
+                 w _ITM_registerTMCloneTable
+000000000000219c r __FRAME_END__
+0000000000002030 r __GNU_EH_FRAME_HDR
+0000000000004050 D __TMC_END__
+00000000000002e8 r __abi_tag
+0000000000004050 B __bss_start
+                 w __cxa_finalize@@GLIBC_2.2.5
+0000000000004040 D __data_start
+0000000000001130 t __do_global_dtors_aux
+0000000000003df0 d __do_global_dtors_aux_fini_array_entry
+0000000000004048 D __dso_handle
+0000000000003de8 d __frame_dummy_init_array_entry
+                 w __gmon_start__
+0000000000003df0 d __init_array_end
+0000000000003de8 d __init_array_start
+0000000000001300 T __libc_csu_fini
+00000000000012a0 T __libc_csu_init
+                 U __libc_start_main@@GLIBC_2.2.5
+0000000000004050 D _edata
+0000000000004058 B _end
+0000000000001304 T _fini
+0000000000001000 t _init
+0000000000001090 T _start
+                 U atoi@@GLIBC_2.2.5
+0000000000004050 b completed.0
+0000000000004040 W data_start
+00000000000010c0 t deregister_tm_clones
+                 U exit@@GLIBC_2.2.5
+0000000000001170 t frame_dummy
+0000000000004054 B j
+0000000000001194 T main
+00000000000010f0 t register_tm_clones
+                 U sprintf@@GLIBC_2.2.5
+                 U strlen@@GLIBC_2.2.5
+0000000000001175 T suma
+                 U write@@GLIBC_2.2.5
+
+Se puede saber la posición de memoria de j pero no de i, ya que j está guardado
+en .bss pero i se guarda en la pila al declararse dentro de la función main.
+Suma está en la sección .text
+
+
+
+El comando que s eusa es
+
+gcc -o mem1_previo_v2 mem1_previo_v2.c -static
+
+
+
+El programa mem2_previo_v2 tiene una reserva diferente en el heap en ambos
+casos a diferencia del primero que la tiene constante.

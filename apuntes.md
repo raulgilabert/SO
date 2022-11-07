@@ -639,3 +639,168 @@ distancia respecto al tiempo teórico de CPU (cuando más lejos mayor prioridad)
 Además crea grupos de procesos permitiendo contabilizar el uso de CPU de cada
 grupo de forma que se evita que un usuario monopolice la máquina.
 
+## Memoria
+
+La CPU solo puede acceder directamente a la memoria y los registros, por tanto
+las instrucciones y los datos deben cargarse en memoria para poder
+referenciarse, es decir, reservar memoria, escribir en ella el programa/los
+datos y pasar el programa al punto de entrada en caso de ser de instrucciones
+la memoria.
+
+Hay dos tipos de direcciones: la referencia emitida por la CPU que es la
+dirección lógica y la ocupada en memoria que es la dirección física. No tienen
+por qué coincidir si el sistema operativo y el hardware ofrecen soporte para la
+traducción entre estas.
+
+Los sistemas multiprogramados son esos en los que hay varios programas cargados
+en memoria física a la vez. Esto facilita la ejecución concurrente de los
+programas y simplifica el cambio de contexto de ejecución. En esta clase de
+sistemas el sistema operativo deve de garantizar la protección de la memoria
+física para evitar el acceso de programas que no deben a la memoria. El kernel
+de esta manera debe modificar la MMU para reflejar cualquier cambio de contexto
+o si se aumenta el espacio de direcciones entre otras cosas.
+
+El MMU es un componente de hardware que s eencarga de la traducción de
+direcciones y la protección del acceso a memoria. El sistema operativo es el
+responsable de configurarlo con los valores de la traducción de direcciones. El
+sistema operativo se encarga de gestionar la excepción en función del caso que
+sea, pudiendo eliminar el proceso con el error que personalmente más odio:
+`SIGSEGV` también conocido como `segmentation fault`.
+
+El sistema operativo tiene que modificar la traducción de direcciones del MMU
+cuando se asigna memoria al inicializar o cuando se produce un cambio en el
+espacio de direcciones al aumentar o disminuir al pedir o liberar memoria
+dinámica. Además también se modifica en el cambio de contexto cuando un proceso
+pasa a abandonar la CPU y otro toma ese lugar.
+
+El sistema operativo se encarga de la carga de los programas en memoria,
+reserma y libera memoria dinámicamente a través de llamadas a sistema, ofrece
+la compartición de memoria entre procesos.
+
+### Carga de programas
+
+El ejectuable debe de estar en la memoria para poder ejecutarse pero este enm
+un primer momento se encuentra en el disco. De esta manera el sistema operativo
+debe de leer e interpretar el ejecutable, preparar el esquema del proceso en la
+memoria lógica y asignar la memoria física, leer las secciones del programa del
+disco y escribir en la memoria y cargar el registro del program counter con la
+dirección de la instrucción definida en el ejecutable como puunto de entrada,
+además de realizar las optimizaciones aplicadas a la carga de programas como es
+la carga bajo demanda y las librería compartidas y de enlace dinámico. Todo
+esto se realiza en Linux al mutar un proceso.
+
+### Formato del ejecutable
+
+Primero se interpreta el formato del ejecutable en disco, teniendo en la
+cabecera definidas las secciones del programa. El formato más extendido en
+sistemas POSIX es ELF que tiene diferentes secciones entre ellas `.text` con el
+código, `.data` con los datos globales inicializados, `.bss` con datos globales
+sin valor inicial, `.debug` con información de debug, `.comment` con
+información de control, `.dynamic` ocn información para el enlace dinámico e
+`.init` que contiene la dirección de la primera instrucción.
+
+Después prepara el esquema del proceso en la memoria lógica. Reservando la
+memoria en las distintas partes de la memoria para las distintas clases de
+datos.
+
+### Carga bajo demanda
+
+Las rutinas no se cargan hasta que son llamadas de forma que se aprovecha mucho
+mejor la memoria al no ocupar espacio de esta con funciones que puede que no se
+llamen en ningún momento, además acelera el proceso de carga. Se debe de tener
+un mecanismo que detecte si las rutinas están cargadas o no.
+
+### Optimización de librerías compartidas
+
+Los binarios en el disco no contienen el código de las librerías dinámicas,
+únicamente un enlace a estas, de forma que s eahorra mucho espacio en el disco.
+Además se facilita la actualización de los programas a las nuevas versiones de
+la librerías.
+
+### Reserva o liberación de memoria dinámica
+
+Hay variables cuyo tamaño depende de parámetros de la ejecución. Fijar el
+tamaño de estas en tiempo de compilación no es adecuado ya que se puede
+desaprovechar memoria o tener errores de ejecución si falta memoria reservada.
+De esta manera los sistemas operativos ofrecen un espacio de la memoria llamado
+heap.
+
+Para reservar la memoria se usará la interfaz tradicional de Unis con la
+función `sbrk`. En la que si el número que se le pasa es mayor a 0 aumenta el
+heap, si es menor lo reduce y si es 0 lo mantiene igual.
+
+```C
+int main(int argc, char *argv[]) {
+    int num_procs = atoi(argv[1]);
+    int *pids;
+    pids = sbrk(num_procs*sizeof(int));
+
+    for (int i = 0; i < 10; ++i) {
+	pids[i] = fork();
+
+	if (pids[i] == 0) {
+	    ...
+    	}
+    }
+
+    sbrk(-1*num_procs*sizeof(int));
+}
+```
+
+La librería de C añade la gestión que vincula las direcciones con las variables
+que pide memoria usando la función `malloc`, de forma que si hay tamaño
+consecutivo disponible lo marca como reservado y devuelve la dirección de
+inicio y en caso contrario aumenta el heap y devuelve la dirección de inicio.
+Para libersar memoria se usa la función `free`.
+
+```C
+int main(int argc, char *argv[]) {
+    int num_procs = atoi(argv[1]);
+    int *pids;
+    pids = malloc(num_procs*sizeof(int));
+
+    for (int i = 0; i < 10; ++i) {
+	pids[i] = fork();
+
+	if (pids[i] == 0) {
+	    ...
+    	}
+    }
+    
+    free(pids);
+}
+```
+
+En cambio se producen problemas de fragmentación cuando se quiere asignar una
+cantidad de memoria en una zona más grande al quedar espacios libres que no s
+epueden usar (también se produce a nivel de disco). Hay dos tipos de
+fragmentación: la fragmentación interna que es cuando se asigna memoria a un
+proceso pero no la necesita y la fragmentación externa que es cuando hay
+memoria libre pero no se puede asignar por no estar contigua.
+
+De esta manera se tiene la asignación contínua que puede dar estos errores de
+fragmentación al ocupar todo el espacio asignado direcciones contiguas y la
+asignación no contigua que evita los problemas de fragmentación pero añade
+cmplejidad al sistema operativo y el MMU.
+
+#### Paginación
+
+Un esquema basado en la paginación es un espacio de direcciones lógicas
+dividido en particiones de tamaño fijo llamados páginas y la memoria física se
+divide también en particiones del mismo tamaño llamadas marcos.Para cada página
+del proceso se busca un marco libre y cuando acaba la ejecución devuelve los
+amrcos libres. El sistema de paginación facilita la carga bajo demanda y
+permite especificar la protección a nivel de página, además de facilitar la
+compartición de memoria entre procesos. Por tema d epermisos una página
+pertenece a una única región de memoria. D eeta forma el MMU tiene la tabla de
+páginas para mantener la información a nivel de página con una entrada pro cada
+página y una tabla para cada proceso. Esta suele guardarse en memoria y el
+sistema operativo debe conocer la dirección de memoria en la que se guard ala
+tbala de cada proceso. Los procesadores actuales disponen también de TLB, una
+clase de memoria cache para el MMU.
+
+Se suelen usar páginas de 4KB y la tabla va creciendo a medida que se van
+añadiendo secciones para evitar que empiece con un tamaño excesivamente grande.
+
+
+

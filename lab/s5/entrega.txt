@@ -1,0 +1,54 @@
+35.- 
+
+Solo sale la variable globalArray que se encuentra en .bss. Es una variable
+global.
+
+36.- 
+
+En que viendo tanto por el tamaño como por objdump se ve que static es mucho
+más grande en espacio, además que por nm se ve que tiene muchos más símbolos
+declarados.
+
+37.-
+
+Que el maps de static no tiene casi referencias externas debido a que todo lo
+que llama está compilado en el mismo ejecutable.
+
+38.-
+
+Pertenece al heap que va de 5646b1e60000-5646b1e81000
+
+region 0: 0x5646b1e602a0-0x5646b1e612b0
+region 1: 0x5646b1e612b0-0x5646b1e622c0
+region 2: 0x5646b1e622c0-0x5646b1e632d0
+
+
+39.- 
+
+3: 5646b1e60000-5646b1e81000
+5: 55970c60a000-55970c62b000
+100: 557b63a7c000-557b63b00000
+
+Solo cambia cuando es 100 ya que tanto para 3 como para 5 no llega a ocupar el
+espacio inicial que reserva malloc.
+
+40.-
+
+El tamaño ahora es de 21000. Esto se debe a que al hacer free el espacio que se
+libera se vuelve a ocupar en la siguiente iteración, de forma que no se
+necesita llamar a más espacio de memoria.
+
+41.- 
+
+3: 5654caba1000-5654caba4000
+5: 556429245000-55642924a000
+100: 5601b06d0000-5601b0734000
+
+Sí que cambia ya que al hacerlo usando sbrk solo se va reservando de heap el
+espacio que se pide y no una cantidad de páginas determinada como hace malloc.
+
+42.-
+
+Que al salir del espacio reservado por malloc continua intentando escribir y se
+lanza un segmentation fault. No falla en las primeras iteraciones porque está
+trabajando en el espacio reservado por malloc.
