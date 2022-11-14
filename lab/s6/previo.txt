@@ -1,0 +1,35 @@
+1.-
+
+Está en proc/[pid]/stat en los campos 10 y 12 siendo 10 para los minor y 12
+para los major
+
+2.-
+
+vmstat 1
+
+Se muestran en las columnas si y so de la sección swap
+
+3.-
+
+Hecho
+
+4.- 
+
+Hecho 
+
+5.-
+
+Hecho
+
+6.-
+
+10: 0.001
+20: 0.002
+30: 0.010
+40: 0.634
+50: 1:17.51
+
+7.-
+
+Con un valor entre 10 y 19 para ponerlo por debajo del valor por defecto en
+prioridad

@@ -1,0 +1,80 @@
+43.-
+
+La máquina tiene 8 hardware threads, 4 cores y 4 cpus
+
+44.-
+
+Tiempos:
+
+07.46
+07.47
+07.46
+07.49
+07.50
+
+tiempo mínimo: 07.46
+tiempo máximo: 07.50
+tiempo medio:  07.476
+
+45.-
+
+07.84
+07.93
+07.93
+10.32
+10.51
+
+13.99
+14.76
+14.80
+14.87
+15.00
+15.05
+15.07
+15.17
+15.18
+15.33
+
+46.-
+
+7.67
+7.70
+
+10.93
+10.92
+
+47.- 
+
+Tarda más por tener más procesos en ejecución
+
+
+48.-
+
+100%
+
+49.-
+
+Ha sido por jerarquía de procesos
+
+
+50.-
+
+Se mantiene igual cuando hay treads libres pero tarda menos si todo están
+ocupados porque BAJA_PRIO_FIB tiene menos tiempo de CPU cada vez que se le da
+
+51.-
+
+El 100%
+
+52.-
+
+El sistema tiene 16679649280 bytes
+
+53.-
+
+Hecho
+
+54.- 
+
+Hehco
+
