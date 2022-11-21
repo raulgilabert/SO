@@ -1,0 +1,64 @@
+55.-
+
+$ ps
+$ ps
+
+$ ./es1 > /dev/pts/12
+
+$ ./es1 | ./es1
+
+$ strace -o salida_v2 -e read ./es1_v2 < es2.c
+$ strace -o salida_v1 -e read ./es1 < es2.c
+
+La primera ejecución de strace escribe más de 1000 líneas con llamadas a sis
+tema de solo 1 caracter además de la llamada inicial que recibe toda la
+información del archivo. La segunda recibe unas pocas llamadas de 256 bytes.
+
+La primera versión ejecuta 1701 llamadas a sistema de lectura. La segunda solo
+8.
+
+La segunda tiene una influencia de mayor velocidad de ejecución ya que ejecuta
+muchas menos llamadas a sistema condensando las más de 1000 de la primera
+versión en pocas de mucho más tamaño de lectura.
+
+
+56.-
+
+Cuando se ejecuta con 0 se imprime el número en ascii, cuando se hace con 1 se
+hace en formato interno.
+
+
+57.-
+
+En la ejecución que la entrada está en ascii no imprime nada ya que el programa
+necesita una entrada de 4 bytes con contenido y el char '\n'.
+
+
+58.-
+
+Porque escribe el número escrito en el archivo como si este estuviera en ascii
+de una longitud variable pero al estar escrito uno en formato interno este se
+escribe de forma inteligible.
+
+
+59.-
+
+./es1                        0.0 00:00:00
+./es5                        100 00:00:19
+
+Se debe a que es5 es un while(1) que tiene la CPU funcionando todo el tiempo y,
+en cambio, es1 al hacer la llamada read bloquea el proceso hasta recibir algo.
+
+
+60.-
+
+La primera ejecución imprime "read correcto" y la segunda "read interrumpido
+por signal"
+
+
+61.-
+
+Que tras la primera llamada al signal se restablece su tratmaiento por defecto.
+
+
+

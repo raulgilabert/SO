@@ -1,0 +1,60 @@
+1.-
+
+Devuelve un 0
+
+
+2.- 
+
+./es1 archiivo.txt
+
+
+-rwxr-xr-x 1 raulg raulg 21168 Nov 21 00:06 es1
+-rw-r--r-- 1 raulg raulg  1170 Feb  8  2021 es1.c
+-rwxr-xr-x 1 raulg raulg 21352 Nov 21 00:06 es2
+-rw-r--r-- 1 raulg raulg  1700 Feb  8  2021 es2.c
+-rwxr-xr-x 1 raulg raulg 21168 Nov 21 00:06 es3
+-rw-r--r-- 1 raulg raulg   943 Feb  8  2021 es3.c
+-rwxr-xr-x 1 raulg raulg 21064 Nov 21 00:06 es4
+-rw-r--r-- 1 raulg raulg  1206 Feb  8  2021 es4.c
+-rwxr-xr-x 1 raulg raulg 20816 Nov 21 00:06 es5
+-rw-r--r-- 1 raulg raulg    31 Feb  8  2021 es5.c
+-rwxr-xr-x 1 raulg raulg 21064 Nov 21 00:06 es6
+-rw-r--r-- 1 raulg raulg   112 Feb  8  2021 es6.c
+-rwxr-xr-x 1 raulg raulg 21024 Nov 21 00:06 es7
+-rw-r--r-- 1 raulg raulg   107 Feb  8  2021 es7.c
+-rwxr-xr-x 1 raulg raulg 21128 Nov 21 00:06 es8
+-rw-r--r-- 1 raulg raulg   644 Feb  8  2021 es8.c
+
+
+3.-
+
+ps -eo pid,user,command | grep bash
+
+
+4.-
+
+
+
+
+5.-
+
+En el caso de la representaciñón interna imprime 4 bytes y en el formato de
+string usa 5 bytes ya que el entero ocuppa 4 bytes pero al ser un número en
+formato decimal de 5 dígitos cuando se imprime en string usa 5 caracteres.
+
+En la impresión de máquina no se imprime todo ya que hay caracteres no
+representables.
+
+6.-
+
+La función read_driver_1 sirve para el driver 1 y la función read_driver_2 para
+el driver 2.
+
+El major y el minor sirven para identificar al driver, siendo el major el
+indicador del tipo de driver y el minor el indicador del driver.
+
+Driver | Major | Minor
+----------------------
+1      | 249   | 0
+----------------------
+2      | 250   | 0
