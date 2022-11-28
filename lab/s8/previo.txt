@@ -1,0 +1,34 @@
+1.-
+
+mknod PIPE1 p
+cat > PIPE1
+cat < PIPE1
+
+
+2.-
+
+No porque una pipe sin nombre solo puede ejecutarse en el mismo proceso. Desde
+la misma terminal sí por el motivo anteriormente descrito.
+
+
+3.-
+
+dup2(4, 0);
+close(4);
+
+
+4.-
+
+createSocket:
+
+Crea una dirección para el socket (Addr) y copia ahí el string socketId. Guarda
+en socket_fd AF_UNIX(Dominio), SOCK_STREAM(tipo) y un protocolo 0. Comprueba si
+el descriptor es < 0 que esto significa que hay un error. Guarda un entero en
+bind. En caso que funcione devuelve 0, si no un -1. Guarda un entero en listen
+que pone el socket en espera de una conexión. Si va bien devuelve 0, si no un
+-1.
+
+serverConnection:
+
+Se le pasa el socket creado y comprueba que este exista, esté enlazado y en
+escucha con el accept. Si va bien devuelve el fd, si no, un -1.

@@ -1,0 +1,13 @@
+67.-
+
+Contiene tanto "Inicio" como "Fin". Contiene solo la salida del padre ya que se
+redirecciona la salida del proceso inicial al fichero.
+
+68.-
+
+Ninguno acaba por tener u canal de lectura abierto.
+
+69.-
+
+Se debería crear otra ya que podría haber algún otro programa escribiendo por
+esa pipe.
