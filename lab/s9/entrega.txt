@@ -1,0 +1,106 @@
+70.-
+
+Ha dado error el cuarto comando porque no se permiten hacer hard links de
+directorios porque estos no permiten que se creen bucles.
+
+
+
+EN D nos duce que es un fichero de datos, en E dice que es un enlace simbólico
+que direcciona a A, en F dice que es un enlace simbólico que direcciona a D y
+en G dice que es un hard link que direcciona a D.
+
+
+
+D
+
+$ more D
+
+estoy en el directorio A
+
+$ cat D
+
+estoy en el directorio A
+
+$ readlink D
+
+
+E
+
+$ more E
+
+*** E: directory ***
+
+$ cat E
+
+cat: E: Is a directory
+
+$ readlink E
+
+/home/raulg/A
+
+
+F
+
+$ more F
+
+estoy en el directorio A
+
+$ cat F
+
+estoy en el directorio A
+
+$ readlink F
+
+D
+
+
+G
+
+$ more G
+
+estoy en el directorio A
+
+$ cat G
+
+estoy en el directorio A
+
+$ readlink G
+
+
+Sí que se ejecutan los mismo accesos. No influye ya que un path relativo se
+convierte en absoluto.
+
+
+$ ln -s W W
+
+$namei W
+
+f: W
+ l W -> W
+   l W -> W
+     l W -> W
+       l W -> W
+         l W -> W
+           l W -> W
+             l W -> W
+               l W -> W
+                 l W -> W
+                   l W -> W
+                     l W -> W
+                       l W -> W
+                         l W -> W
+                           l W -> W
+                             l W -> W
+                               l W -> W
+                                 l W -> W
+                                   l W -> W
+                                     l W -> W
+                                       l W -> W
+                                         l W -> W
+namei: W: exceeded limit of symlinks
+
+
+
+
+
+
